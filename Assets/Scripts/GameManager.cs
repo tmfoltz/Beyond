@@ -13,7 +13,13 @@ namespace Beyond
         public void Awake()
         {
             _instance = this;
-            SceneManager.LoadSceneAsync((int)ScenesIndices.MAIN, LoadSceneMode.Additive);
+            SceneManager.LoadSceneAsync((int)ScenesIndices.MAIN_MENU, LoadSceneMode.Additive);
+        }
+
+        public void LoadGame()
+        {
+            SceneManager.UnloadSceneAsync((int)ScenesIndices.MAIN_MENU);
+            SceneManager.LoadSceneAsync((int)ScenesIndices.GAME, LoadSceneMode.Additive);
         }
     }
 

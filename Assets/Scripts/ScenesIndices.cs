@@ -6,10 +6,9 @@ namespace Beyond
 {
     public enum ScenesIndices 
     {
-        MANAGER = 0, // The scene with our game manager
-        MAIN = 1, // Main title / start screen
+        MANAGER = 0, // The persistent scene with our game manager
+        MAIN_MENU = 1, // Main menu
         GAME = 2, // Main game scene
         WORLD = 3 // World map scene
-        
     }
 }
