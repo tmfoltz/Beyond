@@ -11,13 +11,6 @@ jobs:
         with:
           lfs: true
 
-	- name: Decrypt the license file
-	  run: openssl aes-256-cbc -d -in .github/Unity_v2020.x.ulf.enc -k ${{ secrets.UNITY_LICENSE_DECRYPT_KEY }} >> .github/Unity_v2020.x.ulf
-        
-        # Activate unity
-        - name: Activate Unity
-          run: /opt/Unity/Editor/Unity -quit -batchmode -nographics -silent-crashes -logFile -manualLicenseFile .github/Unity_v2020.x.ulf || exit 0
-        
       # Cache
       - uses: actions/cache@v2
         with:
@@ -29,6 +22,8 @@ jobs:
       # Build
       - name: Build project
         uses: game-ci/unity-builder@v2
+        env:
+            UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
           targetPlatform: StandaloneLinux64
 
