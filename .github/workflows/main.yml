@@ -1,0 +1,39 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  build:
+    name: Build my project ✨
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          lfs: true
+
+	- name: Decrypt the license file
+	  run: openssl aes-256-cbc -d -in .github/Unity_v2020.x.ulf.enc -k ${{ secrets.UNITY_LICENSE_DECRYPT_KEY }} >> .github/Unity_v2020.x.ulf
+        
+        # Activate unity
+        - name: Activate Unity
+          run: /opt/Unity/Editor/Unity -quit -batchmode -nographics -silent-crashes -logFile -manualLicenseFile .github/Unity_v2020.x.ulf || exit 0
+        
+      # Cache
+      - uses: actions/cache@v2
+        with:
+          path: Library
+          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-
+
+      # Build
+      - name: Build project
+        uses: game-ci/unity-builder@v2
+        with:
+          targetPlatform: StandaloneLinux64
+
+      # Output
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Build
+          path: build
