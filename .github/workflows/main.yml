@@ -1,9 +1,26 @@
 name: CI
 on: [push, pull_request]
 jobs:
-  build:
-    name: Build my project ✨
+  buildForAllPlatforms:
+    name: Build my project for ${{ matrix.targetPlatform }} ✨
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform:
+          #- StandaloneOSX # Build a macOS standalone (Intel 64-bit).
+          - StandaloneWindows64 # Build a Windows 64-bit standalone.
+          - StandaloneLinux64 # Build a Linux 64-bit standalone.
+          #- iOS # Build an iOS player.
+          #- Android # Build an Android .apk.
+          #- WebGL # WebGL.
+          #- StandaloneWindows # Build a Windows standalone.
+          #- WSAPlayer # Build an Windows Store Apps player.
+          #- PS4 # Build a PS4 Standalone.
+          #- XboxOne # Build a Xbox One Standalone.
+          #- tvOS # Build to Apple's tvOS platform.
+          #- Switch # Build a Nintendo Switch player
+
     steps:
       # Checkout
       - name: Checkout repository
@@ -12,12 +29,12 @@ jobs:
           lfs: true
 
       # Cache
-      #- uses: actions/cache@v2
-      #  with:
-      #    path: Library
-      #    key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
-      #    restore-keys: |
-      #      Library-
+      - uses: actions/cache@v2
+        with:
+          path: Library
+          key: Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-
 
       # Build
       - name: Build project
@@ -25,11 +42,11 @@ jobs:
         env:
             UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
-          targetPlatform: StandaloneLinux64
-          allowDirtyBuild: true
+          targetPlatform: ${{ matrix.targetPlatform }}
 
       # Output
       - uses: actions/upload-artifact@v2
         with:
           name: build
-          path: Builds/
+          path: build
+          retention-days: 14
