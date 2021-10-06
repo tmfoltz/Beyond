@@ -9,11 +9,25 @@ namespace Beyond
     {
         
         public static GameManager _instance;
+        public bool MainMenuLoaded;
 
         public void Awake()
         {
             _instance = this;
             SceneManager.LoadSceneAsync((int)ScenesIndices.MAIN_MENU, LoadSceneMode.Additive);
+            MainMenuLoaded = false;
+        }
+
+        public void Update()
+        {
+            if (!MainMenuLoaded)
+            {
+                if (SceneManager.GetSceneByBuildIndex((int)ScenesIndices.MAIN_MENU).isLoaded)
+                {
+                    SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex((int)ScenesIndices.MAIN_MENU));
+                    MainMenuLoaded = true ;
+                }
+            }
         }
 
         public void LoadGame()
